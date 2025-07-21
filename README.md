@@ -20,7 +20,7 @@
 
 ### 1. Клонируйте репозиторий
 ```bash
-git clone https://github.com/your-username/spring-jwt.git
+git clone https://github.com/staveelxd/spring-jwt.git
 cd spring-jwt
 ```
 
