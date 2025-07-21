@@ -1,20 +1,49 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <head>
   <title>Главная</title>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
 </head>
 <body class="container mt-5">
-<h2>Добро пожаловать!</h2>
+    <nav class="navbar navbar-expand-lg navbar-light bg-light mb-4">
+        <div class="container">
+            <a class="navbar-brand" href="/">JWT Auth</a>
+            <div class="navbar-nav">
+                <a class="nav-link" th:href="@{/}" sec:authorize="!isAuthenticated()">Войти</a>
+                <a class="nav-link" th:href="@{/logout}" sec:authorize="isAuthenticated()">Выйти</a>
+                <a class="nav-link" th:href="@{/register}">Регистрация</a>
+            </div>
+        </div>
+    </nav>
 
-<div th:if="${token}">
-  <h5>Ваш токен:</h5>
-  <pre th:text="${token}"></pre>
-</div>
-
-<div th:if="${token == null}">
-  <p>Вы не авторизованы.</p>
-  <p><a th:href="@{/auth/login}">Войти</a> или <a th:href="@{/auth/register}">Зарегистрироваться</a></p>
-</div>
+    <div class="container mt-5">
+        <div class="row">
+          <div class="col-md-6 offset-md-3">
+            <div sec:authorize="isAuthenticated()">
+              <div class="card">
+                <div class="card-header">
+                  <h2>Домашняя страница</h2>
+                </div>
+                <div class="card-body">
+                  <p>Вы вошли как: <span sec:authentication="name">пользователь</span></p>
+                  <p>Добро пожаловать на домашнюю страницу!</p>
+                  <p>Эта страница доступна только авторизованным пользователям.</p>
+                </div>
+              </div>
+                <p>Пользователь: <span sec:authentication="name"></span></p>
+                <p>Ваши роли: <span sec:authentication="principal.authorities"></span></p>
+              <div sec:authorize="hasRole('ADMIN')" class="alert alert-info mt-3">
+                <p>Вы обладаете правами администратора.</p>
+                <a href="/api/admin/dashboard" class="btn btn-primary">Админ панель</a>
+              </div>
+              
+              <div sec:authorize="hasRole('PREMIUM_USER')" class="alert alert-info mt-3">
+                <p>Вы обладаете премиум-статусом.</p>
+                <a href="/api/premium/features" class="btn btn-primary">Премиум функции</a>
+              </div>
+            </div>
+          </div>
+        </div>
+    </div>
 </body>
 </html>

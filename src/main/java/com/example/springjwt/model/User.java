@@ -3,21 +3,23 @@ package com.example.springjwt.model;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
-import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import java.util.Set;
 import java.util.UUID;
 
 @Entity
-@Data
+@Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
 @Table(name = "\"user\"")
 public class User {
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.UUID)
     @Column(columnDefinition = "BINARY(16)")
     private UUID id;
 
@@ -33,4 +35,9 @@ public class User {
     @ElementCollection(fetch = FetchType.EAGER)
     @Enumerated(EnumType.STRING)
     private Set<Role> roles;
+
+    @Override
+    public String toString() {
+        return "User(id=" + id + ", username=" + username + ", email=" + email + ", roles=" + roles + ")";
+    }
 }

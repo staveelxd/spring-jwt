@@ -1,23 +1,36 @@
 package com.example.springjwt.security;
 
 import com.example.springjwt.model.User;
+import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.UUID;
 
 @Component
 public class JwtUtil {
-    private final String secret = "MegaUltraSuperPuperSecretPassword228!";
-
+    
+    @Value("${jwt.secret}")
+    private String secret;
+    
+    @Value("${jwt.access-token-expiration}")
+    private long accessTokenExpiration;
+    
+    @Value("${jwt.refresh-token-expiration}")
+    private long refreshTokenExpiration;
 
     public String generateAccessToken(User user) {
-        long accessTokenExpiration = 30000;
+        Map<String, Object> claims = new HashMap<>();
+        claims.put("sub", user.getId().toString());
+        claims.put("roles", user.getRoles());
+        
         return Jwts.builder()
-                .setSubject(user.getId().toString())
-                .claim("roles", user.getRoles())
+                .setClaims(claims)
                 .setIssuedAt(new Date())
                 .setExpiration(new Date(System.currentTimeMillis() + accessTokenExpiration))
                 .signWith(Keys.hmacShaKeyFor(secret.getBytes()))
@@ -25,21 +38,28 @@ public class JwtUtil {
     }
 
     public String generateRefreshToken(User user) {
-        long refreshTokenExpiration = 60000;
+        Map<String, Object> claims = new HashMap<>();
+        claims.put("sub", user.getUsername());
+        claims.put("roles", user.getRoles());
+        
         return Jwts.builder()
-                .setSubject(user.getId().toString())
+                .setClaims(claims)
                 .setIssuedAt(new Date())
                 .setExpiration(new Date(System.currentTimeMillis() + refreshTokenExpiration))
                 .signWith(Keys.hmacShaKeyFor(secret.getBytes()))
                 .compact();
     }
 
-    public UUID validateTokenAndGetUserId(String token) {
-        return UUID.fromString(Jwts.parserBuilder()
-                .setSigningKey(secret.getBytes())
-                .build()
-                .parseClaimsJws(token)
-                .getBody()
-                .getSubject());
+    public String extractUserId(String token) {
+        try {
+            Claims claims = Jwts.parserBuilder()
+                    .setSigningKey(Keys.hmacShaKeyFor(secret.getBytes()))
+                    .build()
+                    .parseClaimsJws(token)
+                    .getBody();
+            return claims.getSubject();
+        } catch (Exception e) {
+            throw new RuntimeException("Неправильный токен", e);
+        }
     }
 }
