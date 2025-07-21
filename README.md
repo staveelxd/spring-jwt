@@ -31,13 +31,8 @@ cd spring-jwt
 - `jwt.refresh-token-expiration` — время жизни refresh-токена
 
 ### 3. Соберите и запустите проект
-Для Windows:
 ```bash
-./mvnw.cmd spring-boot:run
-```
-Для Linux/Mac:
-```bash
-./mvnw spring-boot:run
+mvn spring-boot:run
 ```
 
 ### 4. Откройте в браузере
