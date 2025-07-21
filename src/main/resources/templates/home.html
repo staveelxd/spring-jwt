@@ -30,17 +30,6 @@
                   <p>Эта страница доступна только авторизованным пользователям.</p>
                 </div>
               </div>
-                <p>Пользователь: <span sec:authentication="name"></span></p>
-                <p>Ваши роли: <span sec:authentication="principal.authorities"></span></p>
-              <div sec:authorize="hasRole('ADMIN')" class="alert alert-info mt-3">
-                <p>Вы обладаете правами администратора.</p>
-                <a href="/api/admin/dashboard" class="btn btn-primary">Админ панель</a>
-              </div>
-              
-              <div sec:authorize="hasRole('PREMIUM_USER')" class="alert alert-info mt-3">
-                <p>Вы обладаете премиум-статусом.</p>
-                <a href="/api/premium/features" class="btn btn-primary">Премиум функции</a>
-              </div>
             </div>
           </div>
         </div>
